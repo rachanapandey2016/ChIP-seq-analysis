@@ -86,7 +86,7 @@ ChIP-seq-analysis/
 │   ├── peak number details.png
 ├── .gitignore                
 ```
-**0) Interactive Session and Miniconda Setup**  
+**0. Interactive Session and Miniconda Setup**  
 - Before starting the analysis, it is recommended to initialize an interactive session and set up the Miniconda environment for installing required tools.
 - This setup is optional but recommended to streamline the analysis. It helps ensure a controlled environment, but you can modify or skip this step based on your system setup.
 - Starting an interactive session`srun --nodes=1 --ntasks-per-node=1 --mem=20g --time=4:00:00 -p agsmall --pty bash -i`
@@ -95,17 +95,22 @@ ChIP-seq-analysis/
 - Activate the chipseq conda environment`conda activate chipseq`
 - Using a Conda environment allows us to install all necessary tools for this project while keeping our system clean. However, you can install the tools globally if preferred.
 
-**1) Install Required Software for the Analysis not in the modules**  
+**1. Install Required Software for the Analysis not in the modules**  
 - Install deepTools: activate conda environment if not activated`conda activate chipseq`.Then install deepTools~conda install -c conda-forge -c bioconda deeptools`.
 - Install MultiQC`conda install -c bioconda multiqc`
 - Install chromap`conda install -c bioconda chromap`
 - Install Samtools`conda install -c bioconda samtools`
 
-**1. Downloading FASTQ Files from GEO/SRA**
+**2. Downloading FASTQ Files from GEO/SRA**
 - Navigate to the GEO page and use the SRA Run Selector to generate an Accession List for the FASTQ files you need and download the lsit or for this project you can directly download the`SRR_Acc_List.txt` file.
 - Load the sratoolkit module to access SRA tools:`module load sratoolkit/3.0.0`
 - Download FASTQ files using prefetch from SRA accession list(SRR_Acc_List.txt)`cat SRR_Acc_List.txt | xargs prefetch`.
-- Convert downloaded SRA files to FASTQ format`cat SRR_Acc_List.txt | xargs fasterq-dump`
+- Convert downloaded SRA files to FASTQ format`cat SRR_Acc_List.txt | xargs fasterq-dump`. we have 4 fastq files for this project
+
+**3. Quality COntrol Using FastTQC and MultiQC**  
+-  
+
+- 
 
 
 
