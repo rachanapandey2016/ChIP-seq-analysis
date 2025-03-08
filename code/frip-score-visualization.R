@@ -3,11 +3,11 @@
 library(ggplot2)
 library(readxl)
 
-setwd("C:/PhD_Courses/Fourth Semester/GCD 8141 Computational genomics/Project-2/visualization")
+setwd("path_to_your_directory_where_FRiP_score_excel_file_is_located")
 
-frip_data <- read_excel("C:/PhD_Courses/Fourth Semester/GCD 8141 Computational genomics/Project-2/visualization/Frip_scores.xlsx", col_names=FALSE)
+frip_data <- read_excel("Frip_scores.xlsx", col_names=FALSE)
 
-# Assign column names
+# Assign column names (In case your excel file doesnot have column names or else this step is not needed)
 colnames(frip_data) <- c("Treatment_Conditions", "FRiP_Score")
 
 # Check the first few rows
@@ -31,17 +31,3 @@ ggplot(frip_data, aes(x=Treatment_Conditions, y=FRiP_Score, fill=Treatment_Condi
    scale_fill_brewer(palette="Set2") +  # Optional color scheme
    ylim(0, 0.5)  # Set y-axis limit
 dev.off()
-
-setwd("C:/PhD_Courses/Fourth Semester/GCD 8141 Computational genomics/Project-2/Analysis")
-library(ggVennDiagram)
-
-files <- list(
-   "Control" = read.table("Control_shRNA_summits.bed"),
-   "GATA3" = read.table("GATA3_shRNA_summits.bed"),
-   "GATA3_JUN" = read.table("GATA3_shRNA_JUN_OE_summits.bed"),
-   "JUN" = read.table("JUN_OE_DOX_summits.bed")
-)
-
-
-ggVennDiagram(files) + theme_minimal()
-
