@@ -95,6 +95,11 @@ ChIP-seq_GATA3_JUN_Enhancer/
 - Install chromap`conda install -c bioconda chromap`
 - Install Samtools`conda install -c bioconda samtools`
 
+**1. Downloading FASTQ Files from GEO/SRA**
+- Navigate to the GEO page and use the SRA Run Selector to generate an Accession List for the FASTQ files you need and download the lsit or for this project you can directly download the`SRR_Acc_List.txt` file.
+- Load the sratoolkit module to access SRA tools:`module load sratoolkit/3.0.0`
+- Download FASTQ files using prefetch from SRA accession list(SRR_Acc_List.txt)`cat SRR_Acc_List.txt | xargs prefetch`.
+- Convert downloaded SRA files to FASTQ format`cat SRR_Acc_List.txt | xargs fasterq-dump`
 
 
 
