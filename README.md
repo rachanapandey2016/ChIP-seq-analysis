@@ -68,10 +68,11 @@ Repository Structure
 ```
 ChIP-seq_GATA3_JUN_Enhancer/
 ├── code/
-│   ├── chipseq_analysis.sh   # Full pipeline script
-│   ├── preprocessing.sh      # FASTQ to BAM conversion
-│   ├── peak_calling.sh       # MACS2 peak calling
-│   ├── visualization.R       # R scripts for plots
+│   ├── chromap_bed_to_bam_script.sh         # for converting the output from chromap alignemnt which is in bed format to the bam fromat
+│   ├── chromap_alignment.script.sh          # for mapping the fastq files to the reference genome using Chromap
+│   ├── correlation_matrix-deeptools.script.sh       
+│   ├── frip-score-visualization.R           # R scripts for visualizing the frip score in barplots using ggplot2
+|   |__
 ├── data/
 │   ├── README.md             # Dataset description (No raw data)
 ├── results/
