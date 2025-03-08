@@ -89,8 +89,11 @@ ChIP-seq_GATA3_JUN_Enhancer/
 - Activate the chipseq conda environment`conda activate chipseq`
 - Using a Conda environment allows us to install all necessary tools for this project while keeping our system clean. However, you can install the tools globally if preferred.
 
-**1) Install Required Software for the Analysis**  
-- Install deepTools
+**1) Install Required Software for the Analysis not in the modules**  
+- Install deepTools: activate conda environment if not activated`conda activate chipseq`.Then install deepTools~conda install -c conda-forge -c bioconda deeptools`.
+- Install MultiQC`conda install -c bioconda multiqc`
+- Install chromap`conda install -c bioconda chromap`
+- Install Samtools`conda install -c bioconda samtools`
 
 
 
