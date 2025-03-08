@@ -107,7 +107,7 @@ ChIP-seq-analysis/
 - Download FASTQ files using prefetch from SRA accession list(SRR_Acc_List.txt)`cat SRR_Acc_List.txt | xargs prefetch`.
 - Convert downloaded SRA files to FASTQ format`cat SRR_Acc_List.txt | xargs fasterq-dump`. we have 4 fastq files for this project
 
-**3. Quality Control Using FastTQC and MultiQC**  
+**3. Quality Control Using FasttQC and MultiQC**  
 -  
 
 - 
