@@ -82,7 +82,15 @@ ChIP-seq_GATA3_JUN_Enhancer/
 ```
 **0) Interactive Session and Miniconda Setup**  
 - Before starting the analysis, it is recommended to initialize an interactive session and set up the Miniconda environment for installing required tools.
+- This setup is optional but recommended to streamline the analysis. It helps ensure a controlled environment, but you can modify or skip this step based on your system setup.
 - Starting an interactive session`srun --nodes=1 --ntasks-per-node=1 --mem=20g --time=4:00:00 -p agsmall --pty bash -i`
+- Once the session starts, download Miniconda (Linux x86) from the official website provided above and install it in your home directory.
+- To keep dependencies organized, create a Conda environment specifically for ChIP-seq analysis`conda create -n chipseq`
+- Activate the chipseq conda environment`conda activate chipseq`
+- Using a Conda environment allows us to install all necessary tools for this project while keeping our system clean. However, you can install the tools globally if preferred.
+
+**1) Install Required Software for the Analysis**  
+- Install deepTools
 
 
 
