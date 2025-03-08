@@ -66,21 +66,25 @@ Repository Structure
 ---
 
 ```
-ChIP-seq_GATA3_JUN_Enhancer/
+ChIP-seq-analysis/
 ├── code/
 │   ├── chromap_bed_to_bam_script.sh         # for converting the output from chromap alignemnt which is in bed format to the bam fromat
 │   ├── chromap_alignment.script.sh          # for mapping the fastq files to the reference genome using Chromap
 │   ├── correlation_matrix-deeptools.script.sh       
 │   ├── frip-score-visualization.R           # R scripts for visualizing the frip score in barplots using ggplot2
-|   |__
-├── data/
-│   ├── README.md             # Dataset description (No raw data)
+|   ├──genome_index.script.sh       #for indexing the reference genome for Chromap alignment
+|   ├──heatmap-deeptools.script.sh   #For making heatmap using deeptools
+|   ├──peakcalling.script.sh
+├── README.md             
 ├── results/
-│   ├── figures/              # Plots (heatmaps, Venn diagrams)
-│   ├── summary_tables/       # FRiP scores, peak stats
-├── README.md                 # Main project documentation
-├── LICENSE                   # Open-source license (optional)
-├── .gitignore                # Ignore large files (e.g., BAM, FASTQ)
+│   ├── FRiP_scores.png  
+│   ├──
+│   ├──
+│   ├──
+│   ├──
+│   ├──
+│   ├── 
+├── .gitignore                # Ignores .html and .rmd file
 ```
 **0) Interactive Session and Miniconda Setup**  
 - Before starting the analysis, it is recommended to initialize an interactive session and set up the Miniconda environment for installing required tools.
