@@ -82,7 +82,7 @@ ChIP-seq_GATA3_JUN_Enhancer/
 ```
 **0) Interactive Session and Miniconda Setup**  
 - Before starting the analysis, it is recommended to initialize an interactive session and set up the Miniconda environment for installing required tools.
-- Starting an interactive session(srun --nodes=1 --ntasks-per-node=1 --mem=20g --time=4:00:00 -p agsmall --pty bash -i)
+- Starting an interactive session`srun --nodes=1 --ntasks-per-node=1 --mem=20g --time=4:00:00 -p agsmall --pty bash -i'
 
 
 
