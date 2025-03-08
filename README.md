@@ -1,4 +1,7 @@
-# ChIP-seq-analysis  
+---
+title: "ChIP-seq Analysis"
+output: github_document
+--- 
 **Project Title:  Enhancer Reprogramming in MCF7 Breast Cancer: The Impact of GATA3 Knockdown and JUN Overexpression**  
 This repository contains the ChIP-seq analysis pipeline for investigating enhancer reprogramming in MCF7 breast cancer cells under different experimental conditions. 
 I performed ChIP-seq analysis as a class project for the Computational Genomics course. In this project, I analyzed publicly available ChIP-seq data to understand enhancer activity changes due to GATA3 knockdown and JUN overexpression in MCF7 breast cancer cells.  
