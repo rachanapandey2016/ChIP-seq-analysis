@@ -1,0 +1,3 @@
+*.sh linguist-language=Shell
+*.html linguist-vendored
+*.Rmd linguist-vendored
