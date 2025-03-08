@@ -72,19 +72,19 @@ ChIP-seq-analysis/
 │   ├── chromap_alignment.script.sh          # for mapping the fastq files to the reference genome using Chromap
 │   ├── correlation_matrix-deeptools.script.sh       
 │   ├── frip-score-visualization.R           # R scripts for visualizing the frip score in barplots using ggplot2
-|   ├──genome_index.script.sh       #for indexing the reference genome for Chromap alignment
-|   ├──heatmap-deeptools.script.sh   #For making heatmap using deeptools
-|   ├──peakcalling.script.sh
+|   ├── genome_index.script.sh       #for indexing the reference genome for Chromap alignment
+|   ├── heatmap-deeptools.script.sh   #For making heatmap using deeptools
+|   ├── peakcalling.script.sh
 ├── README.md             
 ├── results/
 │   ├── FRiP_scores.png  
-│   ├──
-│   ├──
-│   ├──
-│   ├──
-│   ├──
-│   ├── 
-├── .gitignore                # Ignores .html and .rmd file
+│   ├── Frip_scores.xlsx
+│   ├── correlation_heatmap.png
+│   ├── correlation_scatterplot.png
+│   ├── heatmap.png
+│   ├── multiqc_report.html
+│   ├── peak number details.png
+├── .gitignore                
 ```
 **0) Interactive Session and Miniconda Setup**  
 - Before starting the analysis, it is recommended to initialize an interactive session and set up the Miniconda environment for installing required tools.
