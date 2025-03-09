@@ -74,8 +74,7 @@ ChIP-seq-analysis/
 │   ├── frip-score-visualization.R           # R scripts for visualizing the frip score in barplots using ggplot2
 |   ├── genome_index.script.sh       #for indexing the reference genome for Chromap alignment
 |   ├── heatmap-deeptools.script.sh   #For making heatmap using deeptools
-|   ├── peakcalling.script.sh
-├── README.md             
+|   ├── peakcalling.script.sh            
 ├── results/
 │   ├── FRiP_scores.png  
 │   ├── Frip_scores.xlsx
@@ -84,7 +83,8 @@ ChIP-seq-analysis/
 │   ├── heatmap.png
 │   ├── multiqc_report.html
 │   ├── peak number details.png
-├── .gitignore                
+├── .gitignore
+├── README.md              
 ```
 **0. Interactive Session and Miniconda Setup**  
 - Before starting the analysis, it is recommended to initialize an interactive session and set up the Miniconda environment for installing required tools.
