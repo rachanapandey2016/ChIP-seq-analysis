@@ -230,7 +230,11 @@ done
 echo "All samples processed successfully!"
 ```
 
-** 5 Peak Calling **  
+**5. Peak Calling**  
+**6. Visualizing FRiP Scores**  
+**7. Identifying Unique and Shared Peaks**  
+**8. Correlation Plots and Heatmap**
+
 
 
 
