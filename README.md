@@ -147,7 +147,7 @@ chromap -i -r /scratch.global/pande250/GCD-8141/Project-2/human_genome/GRCh38.p1
 **4.2 Genome Mapping using Chromap**  
 - Chromap (https://github.com/haowenz/chromap) besides aligning the reads to the reference genome it by default comes with all preprocessing steps like trimming the low quality reads and adapters and removing the duplicated reads.
 - The full script for alignment can be found at chromap_alignment.script.sh.
-- Basically for alignmetn this si the core script that we use
+- Basically for alignmetn this is the core script that we use:
 ```
 chromap --preset chip \
         -x "$indexDir/GRCh38_chromap_index" \
