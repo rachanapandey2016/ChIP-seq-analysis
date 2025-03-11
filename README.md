@@ -107,13 +107,43 @@ ChIP-seq-analysis/
 - Download FASTQ files using prefetch from SRA accession list(SRR_Acc_List.txt)`cat SRR_Acc_List.txt | xargs prefetch`.
 - Convert downloaded SRA files to FASTQ format`cat SRR_Acc_List.txt | xargs fasterq-dump`. we have 4 fastq files for this project
 
-**3. Quality Control Using FasttQC and MultiQC**
----  
+**3. Quality Control Using FasttQC and MultiQC**  
 - Once we have all the fastq files( which is 4 for this project), we will run FastQC to the the quality of the sequencing read. We will run this interactively as we only have 4 files, but you can submit it as batch job as well.
 - Make sure to activate the chipseq conda environment `conda activate chipseq` and load the fastqc module `module load fastqc/0.12.1` or any verison of fastqc. the version 0.12.1 is just an example.
 - Now run FastQC on all the input file `fastqc -o ../fastqc_output/ input_fastq/*.fq`.
-- Fastqc will output an HTML report and a zipped archive containing the report's data and plots for each of the iput fastq files.
+- Fastqc will output an HTML report and a zipped archive containing the report's data and plots for each of the input fastq files.
 - Next we will run MultiQC on .zip files from fastqc output `multiqc . -o ../multiqc_output/`
+
+**4. Alignment/Mapping**  
+**4.1 Reference Genome**  
+- I used GRCh38.p14 as a reference genome for this project form GENCODE. You can use the same or use the reference genome form other website like ensembl or NCBI.
+- To download the reference genome from GENCODE use `wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_47/GRCh38.primary_assembly.genome.fa.gz`
+
+ **4.2 Indexing the Reference Genome**  
+ - The reference genome must be indexed before running the chromap alignment. The indexed genome from other alignment tools like STAR, Bowtie2 or BWA cannot be used for the Chromap. each of these aligners should have their own indexed genome. We will submit job ofr creating the indexed genome for chromap as it is computationally intensive. the script for indexing is at genome_index.script.sh
+```
+#!/bin/bash -l
+
+#SBATCH --job-name=chip
+#SBATCH --cpus-per-task=2
+#SBATCH -n 1
+#SBATCH --mem=60gb
+#SBATCH -t 8:00:0
+#SBATCH -o chip.%j.o
+#SBATCH --mail-user=pande250@umn.edu
+
+### Define directories
+wkDir="/scratch.global/pande250/GCD-8141/Project-2"
+fastqDir="$wkDir/input_fastq"
+bamDir="$wkDir/chromap_output_bed"
+indexDir="$wkDir/indexed_human_genome"
+
+#Indexing the reference genome
+chromap -i -r /scratch.global/pande250/GCD-8141/Project-2/human_genome/GRCh38.p14.genome.fa.gz -o /scratch.global/pande250/GCD-8141/Project-2/indexed_human_genome/GRCh38_chromap_index
+```
+**4.2 Genome Mapping using Chromap**  
+- Chromap (https://github.com/haowenz/chromap) besides aligning the reads to the reference genome it by default comes with all preprocessing steps like trimming the low quality reads and adapters and removing the duplicated reads.
+- 
 
 
 
