@@ -25,25 +25,6 @@ mkdir -p "$indexDir"
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate chipseq
 
-# Debugging: Check if Chromap is accessible in Slurm
-echo "Checking Chromap version inside Slurm job:"
-which chromap
-chromap --version
-
-# Ensure Chromap index exists
-cd "$indexDir"
-if [ ! -f "GRCh38_chromap_index" ]; then
-
-    echo "Creating Chromap index for the full genome..."
-
-    chromap -i -r "$ref" -o GRCh38_chromap_index
-
-else
-
-    echo "Chromap index already exists."
-
-fi
-
 # Perform alignments with Chromap (FULL GENOME)
 cd "$fastqDir"
 for f in *.fastq; do
