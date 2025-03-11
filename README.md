@@ -116,11 +116,14 @@ ChIP-seq-analysis/
 
 **4. Alignment/Mapping**  
 **4.1 Reference Genome**  
-- I used GRCh38.p14 as a reference genome for this project form GENCODE. You can use the same or use the reference genome form other website like ensembl or NCBI.
-- To download the reference genome from GENCODE use `wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_47/GRCh38.primary_assembly.genome.fa.gz`
+- I used GRCh38.p14 as a reference genome for this project from GENCODE. You can use the same or use the reference genome from other website like ensembl or NCBI.
+- To download the reference genome from GENCODE use
+```
+wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_47/GRCh38.primary_assembly.genome.fa.gz
+```  
 
  **4.2 Indexing the Reference Genome**  
- - The reference genome must be indexed before running the chromap alignment. The indexed genome from other alignment tools like STAR, Bowtie2 or BWA cannot be used for the Chromap. each of these aligners should have their own indexed genome. We will submit job ofr creating the indexed genome for chromap as it is computationally intensive. the script for indexing is at genome_index.script.sh
+ - The reference genome must be indexed before running the chromap alignment. The indexed genome from other alignment tools like STAR, Bowtie2 or BWA cannot be used for the Chromap. Each of these aligners should have their own indexed genome. We will submit job for creating the indexed genome for chromap as it is computationally intensive. The script for indexing is at genome_index.script.sh
 ```
 #!/bin/bash -l
 
