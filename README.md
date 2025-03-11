@@ -228,7 +228,10 @@ for bed in *.chromap.bed; do
 done
 
 echo "All samples processed successfully!"
-```  
+```
+
+** 5 Peak Calling **  
+
 
 
 
