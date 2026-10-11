@@ -1,0 +1,417 @@
+---
+title: "Project-2"
+author: "Rachana Pandey"
+date: "2025-03-04"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+###Data used from paper titled "Enhancer reprogramming driven by high-order assemblies of
+transcription factors promotes phenotypic plasticity and breast cancer endocrine resistance"  
+###Step in Data Analysis
+Fastqc and multiqc-
+Chromap alignment
+Bed to SAM, then sorting, indexing, and converting into bigwig file
+Deeptools- Correlation and heatmap
+MACS- peak calling and frip score
+Visualizing the QC using fripscore across different samples - barplot- rstudio
+Bedtools- for venn diagram to compare the overlap of peaks between different conditons.  
+
+```{r, eval=FALSE}
+#Step 1- for fastqc and Multiqc
+conda activate chipseq
+
+#Setting the interactive session
+srun --nodes=1 --ntasks-per-node=1 --mem=40g --time=4:00:00 -p agsmall --pty bash -i
+
+#Loading the sra module
+module load sratoolkit/3.0.0
+
+#Download file through- inside fastq directory
+cat SRR_Acc_List.txt | xargs prefetch
+
+#Converting the sra file into fastq
+cat SRR_Acc_List.txt | xargs fasterq-dump
+
+#Quality Control of Sequencing using FastQC/MultiQC
+#Using fastqc on my input files
+fastqc -o ../fastqc_output/ input_fastq/*.fq
+
+#Running multiqc on .zip files form fastqc output
+multiqc . -o ../multiqc_output/
+
+#Downloaded the reference human genome form gencode
+wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_47/GRCh38.primary_assembly.genome.fa.gz  
+
+```
+
+```{r, eval = FALSE}
+#Step2- indexing genome for chromap and runnng chromap alignment in batch mode
+
+#!/bin/bash -l
+
+#SBATCH --job-name=chip
+#SBATCH --cpus-per-task=2
+#SBATCH -n 1
+#SBATCH --mem=60gb
+#SBATCH -t 8:00:0
+#SBATCH -o chip.%j.o
+#SBATCH --mail-user=pande250@umn.edu
+
+### Define directories
+wkDir="/scratch.global/pande250/GCD-8141/Project-2"
+fastqDir="$wkDir/input_fastq"
+bamDir="$wkDir/chromap_output_bed"
+indexDir="$wkDir/indexed_human_genome"
+
+#Indexing the reference genome
+chromap -i -r /scratch.global/pande250/GCD-8141/Project-2/human_genome/GRCh38.p14.genome.fa.gz -o /scratch.global/pande250/GCD-8141/Project-2/indexed_human_genome/GRCh38_chromap_index
+
+# Reference Genome Path
+ref="/scratch.global/pande250/GCD-8141/Project-2/human_genome/GRCh38.p14.genome.fa"
+
+# Create necessary directories
+mkdir -p "$bamDir"
+mkdir -p "$indexDir"
+
+# Activate Conda and Ensure Chromap is Available
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate chipseq
+
+# Debugging: Check if Chromap is accessible in Slurm
+echo "Checking Chromap version inside Slurm job:"
+which chromap
+chromap --version
+
+# Ensure Chromap index exists
+cd "$indexDir"
+if [ ! -f "GRCh38_chromap_index" ]; then
+
+    echo "Creating Chromap index for the full genome..."
+
+    chromap -i -r "$ref" -o GRCh38_chromap_index
+
+else
+
+    echo "Chromap index already exists."
+
+fi
+
+# Perform alignments with Chromap (FULL GENOME)
+cd "$fastqDir"
+for f in *.fastq; do
+    samp=$(basename "$f" .fastq)
+
+    echo "Processing file: $f"
+
+    # Run Chromap alignment
+    chromap --preset chip \
+        -x "$indexDir/GRCh38_chromap_index" \
+        -r "$ref" \
+        -q 20 \
+        --min-read-length 15 \
+        -1 "$fastqDir/$f" \
+        -o "$bamDir/$samp.chromap.bed"
+
+    # Verify if the output file was created
+    if [ -f "$bamDir/$samp.chromap.bed" ]; then
+        echo "Chromap alignment successful for $samp. Converting to UNIX format..."
+        dos2unix "$bamDir/$samp.chromap.bed"
+    else
+        echo "ERROR: Chromap failed for $samp. No output file found!"
+    fi
+done
+```
+
+
+```{r, eval = FALSE}
+#Step3- CHromap outputs in Bed format and in this script we will convert the bed file to bam file, 
+then perform then sorting, indexing, and converting into bigwig file. we will also index the genome using samtools
+# Define necessary directories
+wkDir="/scratch.global/pande250/GCD-8141/Project-2"
+bedDir="$wkDir/chromap_output_bed"  # Contains BED files
+bamDir="$wkDir/chromap_bed_into_bam"  # Output directory for BAM files
+bigWigDir="$wkDir/bigWig"           # Output directory for BigWig files
+indexDir="$wkDir/samtools_indx_genome"
+
+# Reference Genome Path
+ref="/scratch.global/pande250/GCD-8141/Project-2/human_genome/GRCh38.p14.genome.fa"
+
+# Create output directories if not present
+mkdir -p "$bamDir"
+mkdir -p "$bigWigDir"
+mkdir -p "$indexDir"  # Create directory for samtools-indexed genome
+
+
+# Activate Conda environment for bedtools, samtools, and deepTools
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate chipseq
+
+#Loading  the necessary module
+module load bedtools2/2.31.0-gcc-8.2.0-7j35k74
+module load samtools/1.16.1-gcc-8.2.0-egljrr3
+
+# Navigate to reference genome directory
+cd "$indexDir"
+
+# Index the genome using samtools (This will generate a .fai file), but before that our reference
+genome must be gunzipped/decompressed if it is in .gz format
+echo "Indexing the reference genome with samtools..."
+samtools faidx "$ref" --fai-idx GRCh38_samtools_index.fai
+cut -f1,2 GRCh38_samtools_index.fai > GRCh38sizes.genome
+echo "Genome indexing completed. Genome sizes file (GRCh38sizes.genome) created successfully."
+
+# Convert Chromap BED to BAM, then sort, index, and generate BigWig
+cd "$bedDir"
+
+for bed in *.chromap.bed; do
+    samp="${bed/.chromap.bed/}"
+    echo "Processing sample: $samp"
+
+    # Convert BED to BAM using the newly indexed genome
+    bedtools bedtobam -i "$bedDir/$bed" -g "$indexDir/GRCh38sizes.genome" > "$bamDir/$samp.bam"
+
+    # Sort BAM
+    samtools sort -o "$bamDir/$samp.sorted.bam" "$bamDir/$samp.bam"
+
+    # Index BAM
+    samtools index "$bamDir/$samp.sorted.bam"
+
+    # Generate BigWig
+    bamCoverage -p 4 -b "$bamDir/$samp.sorted.bam" --normalizeUsing RPKM -o "$bigWigDir/$samp.norm.bw"
+
+    echo "Finished processing $samp"
+done
+```
+
+```{r, eval = FALSE}
+#Step 4- Peak calling and Frip score calculation.we will use the output from step 3- sorted bam for peak calling
+### Define directories
+wkDir="/scratch.global/pande250/GCD-8141/Project-2"
+fastqDir="$wkDir/input_fastq"
+bamDir="$wkDir/chromap_bed_into_bam" 
+indexDir="$wkDir/indexed_human_genome"
+peakDir="$wkDir/peak_calling"
+ref="/scratch.global/pande250/GCD-8141/Project-2/human_genome/GRCh38.p14.genome.fa"
+
+##get access to needed software 
+conda activate chipseq
+module load fastqc/0.12.1
+module load samtools/1.16.1-gcc-8.2.0-egljrr3
+module load macs/2.1.1
+module load bedtools2/2.31.0-gcc-8.2.0-7j35k74
+
+# Define Control and Treatment Samples
+control="$bamDir/Control_shRNA.sorted.bam"
+treatments=(
+    "GATA3_shRNA"
+    "JUN_oe_dox"
+    "GATA3_shRNA_JUN_oe"
+)
+
+# Remove old FRiP score file
+rm -f $peakDir/FRiP_scores.tsv
+
+# Loop through each treatment sample
+for sample in "${treatments[@]}"; do
+    macs2 callpeak \
+        -t "$bamDir/${sample}.sorted.bam" \
+        -c "$control" \
+        -f BAM \
+        -g hs \
+        --nomodel --shift -100 \
+        --extsize 200 \
+        -n "$sample" \
+        --outdir "$peakDir"
+
+    # Compute FRiP Score
+    readsInSample=$(samtools view -c "$bamDir/${sample}.sorted.bam")
+    readsInPeaks=$(bedtools intersect -u -a "$bamDir/${sample}.sorted.bam" -b "$peakDir/${sample}_peaks.narrowPeak" -ubam | samtools view -c)
+    frip_score=$(echo "scale=6; ${readsInPeaks} / ${readsInSample}" | bc)
+
+    # Save FRiP score to file
+    echo -e "${sample}\t${frip_score}" >> $peakDir/FRiP_scores.tsv
+
+    echo "Finished processing $sample."
+done
+
+echo "All samples processed successfully!"
+
+#Peak calling for control
+# Define control sample
+control="$bamDir/Control_shRNA.sorted.bam"
+control_peak="$peakDir/Control_shRNA_peaks.narrowPeak"
+
+# Step 1: Call peaks using MACS2
+macs2 callpeak \
+    -t "$control" \
+    -f BAM \
+    -g hs \
+    --nomodel --shift -100 \
+    --extsize 200 \
+    -n "Control_shRNA" \
+    --outdir "$peakDir"
+
+echo "Control sample peak calling completed."
+
+# Step 2: Compute FRiP Score for Control Sample
+readsInControl=$(samtools view -c "$control")
+readsInControlPeaks=$(bedtools intersect -u -a "$control" -b "$control_peak" -ubam | samtools view -c)
+frip_control_score=$(echo "scale=6; ${readsInControlPeaks} / ${readsInControl}" | bc)
+
+# Save FRiP score to file
+echo -e "Control_shRNA\t${frip_control_score}" >> $peakDir/FRiP_scores.tsv
+
+echo "FRiP score for control sample: ${frip_control_score}"
+echo "Control sample processing completed successfully!"
+
+```
+
+```{r, eval = FALSE}
+#Step5- making correlation matrix and plot- inital job initialization is same as other job. 
+#so i didnot repeat it here
+# Change to working directory
+cd /scratch.global/pande250/GCD-8141/Project-2/bigWig
+
+multiBigwigSummary bins -b *.bw --binSize 500 -o correlation_matrix.npz --outRawCounts raw_counts.txt && \
+
+plotCorrelation -in correlation_matrix.npz --corMethod spearman --whatToPlot heatmap --removeOutliers 
+--plotTitle "ChIP-seq Sample Correlation" -o correlation_heatmap.png && \
+
+plotCorrelation -in correlation_matrix.npz --corMethod spearman --whatToPlot scatterplot --plotTitle
+"ChIP-seq Sample Correlation" -o correlation_scatterplot.png
+
+
+echo "DeepTools correlation analysis completed!"
+
+```
+
+```{r, eval = FALSE}
+#Step6- making heatmap using deeptools (in batch mode)
+#!/bin/bash -l
+
+#SBATCH --job-name=chip_heatmap
+#SBATCH --partition=amdsmall
+#SBATCH --cpus-per-task=2
+#SBATCH -n 1
+#SBATCH --mem=60gb
+#SBATCH -t 8:00:0
+#SBATCH -o heatmap.%j.o
+#SBATCH --mail-user=pande250@umn.edu
+
+# Load necessary modules (if needed)
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate chipseq
+
+cd /scratch.global/pande250/GCD-8141/Project-2/heatmap/heatmap-2
+
+# Define input and output files
+BW_FILES="Control_shRNA.bw GATA3_shRNA.bw GATA3_shRNA_JUN_OE.bw JUN_OE_DOX.bw"
+PEAK_FILE="Control_shRNA_summits.bed GATA3_shRNA_summits.bed GATA3_shRNA_JUN_OE_summits.bed JUN_OE_DOX_summits.bed"
+
+# Step 1: Compute matrix for heatmap
+computeMatrix reference-point \
+    --referencePoint center \
+    -S ${BW_FILES} \
+    -R ${PEAK_FILE} \
+    -b 3000 -a 3000 \
+    --skipZeros \
+    -p 2 \
+    -o peaks_matrix.gz
+# Step 2: Generate heatmap
+plotHeatmap \
+    -m peaks_matrix.gz \
+    -out chipseq_heatmap.pdf \
+    --dpi 300 \
+    --colorMap Reds \
+    --whatToShow 'heatmap and colorbar'
+```
+
+```{r}
+#Step7- Frip score visualization
+# Load required package
+library(ggplot2)
+library(readxl)
+
+setwd("C:/PhD_Courses/Fourth Semester/GCD 8141 Computational genomics/Project-2/visualization")
+
+frip_data <- read_excel("C:/PhD_Courses/Fourth Semester/GCD 8141 Computational genomics/Project-2/visualization/Frip_scores.xlsx", col_names=FALSE)
+
+# Assign column names
+colnames(frip_data) <- c("Treatment_Conditions", "FRiP_Score")
+
+# Check the first few rows
+head(frip_data)
+
+# Create bar plot
+ggplot(frip_data, aes(x=Treatment_Conditions, y=FRiP_Score, fill=Treatment_Conditions)) +
+   geom_bar(stat="identity", width=0.6) +
+   theme_minimal() +
+   labs(title="FRiP Score Comparison across Samples", 
+        x="Sample Name", 
+        y="FRiP Score") +
+   theme(
+      axis.text.x = element_text(angle=45, hjust=1, size=12, face="bold"),
+      axis.text.y = element_text(size=11, face="bold"),
+      axis.title.x = element_text(size=12, face="bold"),
+      axis.title.y = element_text(size=12, face="bold"),
+      plot.title = element_text(size=12, face="bold", hjust=0.5)
+   ) +
+   scale_fill_brewer(palette="Set2") +  # Optional color scheme
+   ylim(0, 0.5)  # Set y-axis limit
+
+```
+
+```{r, eval= FALSE}
+#Step8- Using bedtools to find the unique and shared peaks among different treatment conditions-
+#We will run this in interactive mode
+#for bedtools- run in interactive session
+srun --partition=amdsmall --cpus-per-task=1 --mem=30G --time=2:00:00 --pty bash -i
+module load bedtools/2.25.0 
+
+# Rename summit files for clarity
+mv Control_shRNA_summits.bed CONTROl.bed
+mv GATA3_shRNA_summits.bed GATA3.bed
+mv GATA3_shRNA_JUN_OE_summits.bed GATA3_JUN.bed
+mv JUN_OE_DOX_summits.bed JUN.bed
+
+#or we can also set the envirnomnet variable for our file 
+CONTROL="Control_shRNA_summits.bed"
+GATA3="GATA3_shRNA_summits.bed"
+GATA3_JUN="GATA3_shRNA_JUN_OE_summits.bed"
+JUN="JUN_OE_DOX_summits.bed"
+
+
+#Possible pairwise intersection
+bedtools intersect -a $CONTROL -b $GATA3 > shared_Control_GATA3.bed
+bedtools intersect -a $CONTROL -b $GATA3_JUN > shared_Control_GATA3_JUN.bed
+bedtools intersect -a $CONTROL -b $JUN > shared_Control_JUN.bed
+bedtools intersect -a $GATA3 -b $GATA3_JUN > shared_GATA3_GATA3JUN.bed
+bedtools intersect -a $GATA3 -b $JUN > shared_GATA3_JUN.bed
+bedtools intersect -a $GATA3_JUN -b $JUN > shared_GATA3JUN_JUN.bed
+
+#triple way intersection
+bedtools intersect -a $CONTROL -b $GATA3 $JUN > shared_Control_GATA3_JUN.bed
+bedtools intersect -a $CONTROL -b $GATA3 $GATA3_JUN > shared_Control_GATA3_GATA3JUN.bed
+bedtools intersect -a $CONTROL -b $JUN $GATA3_JUN > shared_Control_JUN_GATA3JUN.bed
+bedtools intersect -a $GATA3 -b $JUN $GATA3_JUN > shared_GATA3_JUN_GATA3JUN.bed
+
+#shared by all
+bedtools intersect -a $CONTROL -b $GATA3 $GATA3_JUN $JUN > shared_all4.bed
+
+#Unique peak
+bedtools intersect -a $CONTROL -b $GATA3 $GATA3_JUN $JUN -v > unique_Control.bed
+bedtools intersect -a $GATA3 -b $CONTROL $GATA3_JUN $JUN -v > unique_GATA3.bed
+bedtools intersect -a $GATA3_JUN -b $CONTROL $GATA3 $JUN -v > unique_GATA3JUN.bed
+bedtools intersect -a $JUN -b $CONTROL $GATA3 $GATA3_JUN -v > unique_JUN.bed
+
+#For counting the number of peaks in each bed file
+wc -l *.bed
+
+```
+
+
