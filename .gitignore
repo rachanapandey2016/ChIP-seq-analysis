@@ -1,0 +1,46 @@
+# ---- Large sequencing / intermediate files (never commit) ----
+*.sra
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.bai
+*.sam
+*.bw
+*.bigWig
+*.bedGraph
+*.npz
+*.gz
+*.fa
+*.fa.fai
+*.fai
+*.genome
+# Chromap / genome index files
+*chromap_index*
+*_index*
+
+# ---- deepTools / MACS2 intermediates ----
+*_matrix.gz
+raw_counts.txt
+*.narrowPeak.tmp
+*_peaks.xls
+*_model.r
+
+# ---- R / RStudio ----
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# ---- OS / editor cruft ----
+.DS_Store
+Thumbs.db
+*~
+*.swp
+
+# ---- Logs ----
+*.o
+*.e
+slurm-*.out
+*.%j.o
