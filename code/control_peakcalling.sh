@@ -6,15 +6,15 @@
 #SBATCH --mem=60gb
 #SBATCH -t 2:00:0
 #SBATCH -o controlpeakcalling.%j.o
-#SBATCH --mail-user=pande250@umn.edu
+#SBATCH --mail-user=your_emailid
 
 ### Define directories
-wkDir="/scratch.global/pande250/GCD-8141/Project-2"
+wkDir="${PROJECT_DIR:-/path/to/your/project}"
 fastqDir="$wkDir/input_fastq"
 bamDir="$wkDir/chromap_bed_into_bam"
 indexDir="$wkDir/indexed_human_genome"
 peakDir="$wkDir/peak_calling"
-ref="/scratch.global/pande250/GCD-8141/Project-2/human_genome/GRCh38.p14.genome.fa"
+ref="$wkDir/human_genome/GRCh38.p14.genome.fa"
 
 ## Load necessary software
 source ~/miniconda3/etc/profile.d/conda.sh
