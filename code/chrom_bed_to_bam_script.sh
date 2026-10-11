@@ -10,7 +10,7 @@
 #SBATCH --mail-user=your_emailid
 
 # Define necessary directories
-wkDir="/scratch.global/pande250/GCD-8141/Project-2"
+wkDir="${PROJECT_DIR:-/path/to/your/project}"
 bedDir="$wkDir/chromap_output_bed"  # Contains BED files
 bamDir="$wkDir/chromap_bed_into_bam"  # Output directory for BAM files
 bigWigDir="$wkDir/bigWig"           # Output directory for BigWig files
