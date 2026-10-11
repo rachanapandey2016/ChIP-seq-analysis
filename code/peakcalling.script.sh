@@ -9,12 +9,12 @@
 #SBATCH --mail-user=pande250@umn.edu
 
 ### Define directories
-wkDir="/scratch.global/pande250/GCD-8141/Project-2"
+wkDir="${PROJECT_DIR:-/path/to/your/project}"
 fastqDir="$wkDir/input_fastq"
 bamDir="$wkDir/chromap_bed_into_bam" 
 indexDir="$wkDir/indexed_human_genome"
 peakDir="$wkDir/peak_calling"
-ref="/scratch.global/pande250/GCD-8141/Project-2/human_genome/GRCh38.p14.genome.fa"
+ref="$wkDir/human_genome/GRCh38.p14.genome.fa"
 
 ##get access to needed software 
 conda activate chipseq
