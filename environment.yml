@@ -1,0 +1,33 @@
+# Conda environment for the ChIP-seq (H3K27ac) analysis pipeline.
+# Create with:   conda env create -f environment.yml
+# Activate with: conda activate chipseq
+#
+# Version notes: samtools, bedtools, fastqc and sra-tools are pinned to the
+# versions used on the MSI HPC cluster. MACS2 is left unpinned so the
+# environment resolves cleanly on any system (the original analysis used
+# MACS2 2.1.1 via an HPC module); chromap, deepTools and MultiQC track recent
+# stable releases.
+name: chipseq
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  # Data download
+  - sra-tools=3.0.0
+  # Quality control
+  - fastqc=0.12.1
+  - multiqc
+  # Alignment
+  - chromap
+  # BAM/BED handling
+  - samtools=1.16.1
+  - bedtools=2.31.0
+  # Peak calling
+  - macs2
+  # Coverage tracks, correlation, heatmaps
+  - deeptools
+  # R + packages for FRiP score visualization
+  - r-base
+  - r-ggplot2
+  - r-readxl
