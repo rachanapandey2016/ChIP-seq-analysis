@@ -7,13 +7,17 @@
 #SBATCH --mem=60gb
 #SBATCH -t 8:00:0
 #SBATCH -o heatmap.%j.o
-#SBATCH --mail-user=pande250@umn.edu
+#SBATCH --mail-user=your_emailid
 
-# Load necessary modules (if needed)
+# Set this to your project directory
+wkDir="${PROJECT_DIR:-/path/to/your/project}"
+
+# Load necessary modules
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate chipseq
 
-cd /scratch.global/pande250/GCD-8141/Project-2/heatmap/heatmap-2
+# Change to working directory
+cd $wkDir/heatmap/heatmap-2
 
 # Define input and output files
 BW_FILES="Control_shRNA.bw GATA3_shRNA.bw GATA3_shRNA_JUN_OE.bw JUN_OE_DOX.bw"
