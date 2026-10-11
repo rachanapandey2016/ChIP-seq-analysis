@@ -1,5 +1,14 @@
 #!/bin/bash -l
-#
+
+#SBATCH --job-name=peakoverlap
+#SBATCH --cpus-per-task=2
+#SBATCH -n 1
+#SBATCH --mem=60gb
+#SBATCH -t 8:00:0
+#SBATCH -o peakoverlap.%j.o
+#SBATCH --mail-user=your_emailid
+
+
 # Identify unique and shared H3K27ac peaks across the four MCF7 conditions
 # using bedtools, and report the peak counts used to build the Venn diagram
 # (Figure 1A). Run interactively (the intersections are lightweight):
