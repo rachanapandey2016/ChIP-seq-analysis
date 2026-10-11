@@ -8,12 +8,15 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=pande250@umn.edu
 
+# Set this to your project directory 
+wkDir="${PROJECT_DIR:-/path/to/your/project}"
+
 # Activate Conda
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate chipseq
 
 # Change to working directory
-cd /scratch.global/pande250/GCD-8141/Project-2/bigWig
+cd $wkDir/bigWig
 
 multiBigwigSummary bins -b *.bw --binSize 500 -o correlation_matrix.npz --outRawCounts raw_counts.txt && \
 
