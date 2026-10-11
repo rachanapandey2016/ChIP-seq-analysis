@@ -7,7 +7,7 @@
 #SBATCH -t 8:00:0
 #SBATCH -o bedtobam.%j.o
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=pande250@umn.edu
+#SBATCH --mail-user=your_emailid
 
 # Define necessary directories
 wkDir="/scratch.global/pande250/GCD-8141/Project-2"
