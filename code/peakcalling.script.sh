@@ -6,7 +6,7 @@
 #SBATCH --mem=60gb
 #SBATCH -t 8:00:0
 #SBATCH -o peakcalling.%j.o
-#SBATCH --mail-user=pande250@umn.edu
+#SBATCH --mail-user=your_emailid
 
 ### Define directories
 wkDir="${PROJECT_DIR:-/path/to/your/project}"
