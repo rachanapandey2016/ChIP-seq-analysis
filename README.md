@@ -45,7 +45,7 @@ Pipeline Overview
 - Download FASTQ files from GEO  
 - Quality control using **FastQC** & **MultiQC**
 
-**3. Alignment & Peak Calling**  
+**2. Alignment & Peak Calling**  
 - Indexing the reference genome for Chromap
 - Align reads to hg38 genome using Chromap  
 - Convert BED files to BAM using samtools  
@@ -68,7 +68,7 @@ Repository Structure
 ```
 ChIP-seq-analysis/
 ├── code/
-│   ├── chromap_bed_to_bam_script.sh         # for converting the output from chromap alignemnt which is in bed format to the bam fromat
+│   ├── chromap_bed_to_bam_script.sh         # for converting the output from chromap alignment which is in bed format to the bam fromat
 │   ├── chromap_alignment.script.sh          # for mapping the fastq files to the reference genome using Chromap
 │   ├── correlation_matrix-deeptools.script.sh       
 │   ├── frip-score-visualization.R           # R scripts for visualizing the frip score in barplots using ggplot2
@@ -107,7 +107,7 @@ ChIP-seq-analysis/
 - Download FASTQ files using prefetch from SRA accession list(SRR_Acc_List.txt)`cat SRR_Acc_List.txt | xargs prefetch`.
 - Convert downloaded SRA files to FASTQ format`cat SRR_Acc_List.txt | xargs fasterq-dump`. we have 4 fastq files for this project
 
-**3. Quality Control Using FasttQC and MultiQC**  
+**3. Quality Control Using FastQC and MultiQC**  
 - Once we have all the fastq files( which is 4 for this project), we will run FastQC to the the quality of the sequencing read. We will run this interactively as we only have 4 files, but you can submit it as batch job as well.
 - Make sure to activate the chipseq conda environment `conda activate chipseq` and load the fastqc module `module load fastqc/0.12.1` or any verison of fastqc. the version 0.12.1 is just an example.
 - Now run FastQC on all the input file `fastqc -o ../fastqc_output/ input_fastq/*.fq`.
