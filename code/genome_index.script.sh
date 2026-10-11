@@ -1,12 +1,17 @@
 #!/bin/bash
 #
-#SBATCH --time=96:00:00
+#SBATCH --time=8:00:00
 #SBATCH --ntasks=20
 #SBATCH --mem=50g
 #SBATCH --tmp=120g
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=pande250@umn.edu 
+#SBATCH --mail-user=uour_emailid 
+
+
+# Set this to your project directory (or export PROJECT_DIR)
+wkDir="${PROJECT_DIR:-/path/to/your/project}"
 
 
 #Indexing the reference genome
-chromap -i -r /scratch.global/pande250/GCD-8141/Project-2/human_genome/GRCh38.p14.genome.fa.gz -o /scratch.global/pande250/GCD-8141/Project-2/indexed_human_genome/GRCh38_chromap_index
+chromap -i -r $wkDir/human_genome/GRCh38.p14.genome.fa.gz -o $wkDir/indexed_human_genome/GRCh38_chromap_index
+
