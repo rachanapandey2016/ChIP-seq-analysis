@@ -52,7 +52,12 @@ GATA3 knockdown reduces chromatin accessibility, JUN overexpression increases en
 - **Reference genome:** GRCh38.p14 (hg38) from [GENCODE](https://www.gencodegenes.org/human/) (release 47 primary assembly)
 
 The four SRA runs used in this project are: `SRR8742725`, `SRR8742726`, `SRR8742736`, `SRR8742716`.
-
+| Condition (this project) | SRA run | GEO sample | GEO sample title |
+|---|---|---|---|
+| `Control_shRNA` | SRR8742729 | GSM3675312 | MCF7_shCtrl_K27ac |
+| `GATA3_shRNA` | SRR8742730 | GSM3675313 | MCF7_shGATA3_K27ac |
+| `JUN_OE_DOX` | SRR8742738 | GSM3675321 | MCF7_oeJUN_K27ac |
+| `GATA3_shRNA_JUN_OE_DOX` | SRR8742750 | GSM3675333 | MCF7_shGATA3_Dox_K27ac |
 ---
 
 ## Pipeline
@@ -131,6 +136,8 @@ ChIP-seq-analysis/
 ## How to run
 
 The steps below reflect how the analysis was run on an HPC cluster with SLURM. All heavy steps (`genome_index`, `chromap_alignment`, `peakcalling`, etc.) are provided as `sbatch` scripts in [`code/`](code/); lighter steps (FastQC on four files, MultiQC) can be run interactively.
+
+> **Adapting to your system.** The scripts were written for the University of Minnesota MSI cluster, so they contain hardcoded paths (e.g. `/scratch.global/pande250/GCD-8141/Project-2/...`), SLURM `#SBATCH` directives, and `module load` lines specific to that environment. To run this elsewhere, update the working-directory variables (`wkDir`, `fastqDir`, `bamDir`, `indexDir`, `peakDir`, `ref`) at the top of each script to your own paths, and replace the `module load` lines with the conda environment above (`conda activate chipseq`). On a non-SLURM machine, drop the `#SBATCH` headers and run the scripts directly.
 
 ### 0. Environment setup
 
