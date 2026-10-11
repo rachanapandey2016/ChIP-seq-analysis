@@ -1,0 +1,4 @@
+# Keep large reports and rendered files out of GitHub's language statistics, so the repo is classified by its actual analysis code (Shell / R).
+*.html linguist-vendored
+*.Rmd linguist-documentation
+results/** linguist-vendored
